@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import Header from "./components/Header";
 import "./App.css";
 import QuestionList from "./components/QuestionList";
+import HotQuestions from "./components/HotQuestions";
 
 const queryClient = new QueryClient();
 
@@ -14,6 +15,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <Header />
         <QuestionList />
+        <HotQuestions />
       </QueryClientProvider>
     </div>
   );

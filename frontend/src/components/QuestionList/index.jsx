@@ -91,35 +91,65 @@ export default function QuestionList() {
             >
               {convertDateToText(question.create_time)}
             </Typography>
-            <Typography
-              sx={{ display: "inline", pl: 3 }}
-              component="span"
-              variant="body1"
-              color="text.secondary"
-            >
-              <ThumbUpIcon fontSize="inherit" /> {question.vote_count}
-            </Typography>
-            <Typography
-              sx={{ display: "inline", pl: 1 }}
-              component="span"
-              variant="body1"
-              color="text.secondary"
-            >
-              {question.accepted_answer_id === "0" ? (
-                <CommentIcon fontSize="inherit" />
-              ) : (
-                <CheckCircleIcon fontSize="inherit" color="success" />
-              )}{" "}
-              {question.answer_count}
-            </Typography>
-            <Typography
-              sx={{ display: "inline", pl: 1 }}
-              component="span"
-              variant="body1"
-              color="text.secondary"
-            >
-              <VisibilityIcon fontSize="inherit" /> {question.view_count}
-            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Typography
+                sx={{ display: "flex", pl: 3 }}
+                component="span"
+                variant="body1"
+                color="text.secondary"
+              >
+                <ThumbUpIcon fontSize="inherit" />
+              </Typography>
+              <Typography
+                sx={{ display: "inline" }}
+                component="span"
+                variant="body1"
+                color="text.secondary"
+              >
+                {question.vote_count}
+              </Typography>
+            </Box>
+
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Typography
+                sx={{ display: "flex", pl: 1 }}
+                component="span"
+                variant="body1"
+                color="text.secondary"
+              >
+                {question.accepted_answer_id === "0" ? (
+                  <CommentIcon fontSize="inherit" />
+                ) : (
+                  <CheckCircleIcon fontSize="inherit" color="success" />
+                )}
+              </Typography>
+              <Typography
+                sx={{ display: "inline" }}
+                component="span"
+                variant="body1"
+                color="text.secondary"
+              >
+                {question.answer_count}
+              </Typography>
+            </Box>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Typography
+                sx={{ display: "flex", pl: 1 }}
+                component="span"
+                variant="body1"
+                color="text.secondary"
+              >
+                <VisibilityIcon fontSize="inherit" />
+              </Typography>
+              <Typography
+                sx={{ display: "inline" }}
+                component="span"
+                variant="body1"
+                color="text.secondary"
+              >
+                {question.view_count}
+              </Typography>
+            </Box>
           </Box>
           <Box sx={{ mt: 2, mb: 2, display: "flex", gap: 1 }}>
             {question.tags.map((tag, index) => (
