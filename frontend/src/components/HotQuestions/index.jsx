@@ -1,43 +1,55 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import ListSubheader from "@mui/material/ListSubheader";
-import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
-import WifiIcon from "@mui/icons-material/Wifi";
-import BluetoothIcon from "@mui/icons-material/Bluetooth";
 import CommentIcon from "@mui/icons-material/Comment";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 import questions from "./mockData.json";
 
 export default function HotQuestions() {
-  const [checked, setChecked] = React.useState(["wifi"]);
+  const [hotQuestions, setHotQuestions] = useState([]);
 
-  const handleToggle = (value) => () => {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
-    setChecked(newChecked);
-  };
+  useEffect(() => {
+    setHotQuestions(questions.sort((a, b) => b.view_count - a.view_count));
+  }, [questions]);
 
   return (
     <List
-      sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
-      subheader={<ListSubheader>Hot Questions</ListSubheader>}
+      sx={{
+        width: "100%",
+        maxWidth: 360,
+        bgcolor: "background.paper",
+        borderWidth: "1px",
+        borderStyle: "solid",
+        borderColor: "#bcbcbc",
+        borderRadius: "10px",
+      }}
+      subheader={
+        <ListSubheader
+          sx={{
+            borderTopLeftRadius: "10px",
+            borderTopRightRadius: "10px",
+            backgroundColor: "#efeded",
+          }}
+        >
+          Hot Questions
+        </ListSubheader>
+      }
     >
-      {questions.map((question) => {
+      {hotQuestions.map((question) => {
         return (
-          <ListItem key={question.id}>
+          <ListItem
+            key={question.id}
+            sx={{
+              borderWidth: "1px 0 0 0",
+              borderStyle: "solid",
+              borderColor: "#bcbcbc",
+            }}
+          >
             <ListItemText
               primary={question.title}
               secondary={
@@ -57,7 +69,7 @@ export default function HotQuestions() {
                         )}
                       </Typography>
                       <Typography
-                        sx={{ display: "inline" }}
+                        sx={{ display: "inline", pl: 1 }}
                         component="span"
                         variant="body2"
                         color="text.secondary"

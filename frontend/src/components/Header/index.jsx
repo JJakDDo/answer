@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -82,13 +83,27 @@ export default function Header(props) {
       </Typography>
       <Divider />
       <List>
-        {navItems.map((item) => (
-          <ListItem key={item} disablePadding>
+        <Link to="/">
+          <ListItem disablePadding>
             <ListItemButton sx={{ textAlign: "center" }}>
-              <ListItemText primary={item} />
+              <ListItemText primary="Answer" />
             </ListItemButton>
           </ListItem>
-        ))}
+        </Link>
+        <Link to="/">
+          <ListItem disablePadding>
+            <ListItemButton sx={{ textAlign: "center" }}>
+              <ListItemText primary="Questions" />
+            </ListItemButton>
+          </ListItem>
+        </Link>
+        <Link to="/tags">
+          <ListItem disablePadding>
+            <ListItemButton sx={{ textAlign: "center" }}>
+              <ListItemText primary="Tags" />
+            </ListItemButton>
+          </ListItem>
+        </Link>
       </List>
     </Box>
   );
@@ -107,11 +122,15 @@ export default function Header(props) {
             <MenuIcon />
           </IconButton>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            {navItems.map((item) => (
-              <Button key={item} sx={{ color: "#fff" }}>
-                {item}
-              </Button>
-            ))}
+            <Link to="/">
+              <Button sx={{ color: "#fff" }}>Answer</Button>
+            </Link>
+            <Link to="/">
+              <Button sx={{ color: "#fff" }}>Questions</Button>
+            </Link>
+            <Link to="/tags">
+              <Button sx={{ color: "#fff" }}>Tags</Button>
+            </Link>
           </Box>
           <Box
             sx={{
