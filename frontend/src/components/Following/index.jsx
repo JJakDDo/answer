@@ -17,7 +17,6 @@ export default function Following() {
     <List
       sx={{
         width: "100%",
-        maxWidth: 360,
         bgcolor: "background.paper",
         borderWidth: "1px",
         borderStyle: "solid",

@@ -43,8 +43,15 @@ function convertDateToText(timestamp) {
 export default function QuestionList() {
   // const { data: questions } = useGetQuestions();
   return (
-    <Box sx={{ width: "760px" }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+    <Box>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 2,
+        }}
+      >
         <Typography component="span" variant="h6" color="text.primary">
           All Questions
         </Typography>
@@ -61,7 +68,7 @@ export default function QuestionList() {
         </ButtonGroup>
       </Box>
       <Divider />
-      <List sx={{ width: "100%", maxWidth: 760, bgcolor: "background.paper" }}>
+      <List sx={{ bgcolor: "background.paper" }}>
         {questions.map((question) => (
           <React.Fragment key={question.id}>
             <ListItem alignItems="flex-start" sx={{ pl: 0 }}>
