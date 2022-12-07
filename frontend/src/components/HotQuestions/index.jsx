@@ -54,7 +54,10 @@ export default function HotQuestions() {
               secondary={
                 <React.Fragment>
                   {question.answer_count > 0 && (
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Box
+                      component="span"
+                      sx={{ display: "flex", alignItems: "center" }}
+                    >
                       <Typography
                         sx={{ display: "flex" }}
                         component="span"

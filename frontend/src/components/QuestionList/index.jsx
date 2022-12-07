@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
@@ -13,6 +14,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 import { useGetQuestions } from "../../hooks/questions";
+import { convertDateToText } from "../../utils/convertDateToText";
 
 import questions from "./mockData.json";
 
@@ -33,11 +35,6 @@ const MONTH_MAP = [
 
 function getStatusText(status) {
   return status !== "0" ? "answered" : "asked";
-}
-
-function convertDateToText(timestamp) {
-  const date = new Date(timestamp * 1000);
-  return `${MONTH_MAP[date.getMonth()]} ${date.getDate()}`;
 }
 
 export default function QuestionList() {
@@ -71,16 +68,18 @@ export default function QuestionList() {
       <List sx={{ bgcolor: "background.paper" }}>
         {questions.map((question) => (
           <React.Fragment key={question.id}>
-            <ListItem alignItems="flex-start" sx={{ pl: 0 }}>
-              <Typography
-                sx={{ display: "inline" }}
-                component="span"
-                variant="h6"
-                color="text.primary"
-              >
-                {question.title}
-              </Typography>
-            </ListItem>
+            <Link to={`/questions/${question.id}`}>
+              <ListItem alignItems="flex-start" sx={{ pl: 0 }}>
+                <Typography
+                  sx={{ display: "inline" }}
+                  component="span"
+                  variant="h6"
+                  color="text.primary"
+                >
+                  {question.title}
+                </Typography>
+              </ListItem>
+            </Link>
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Typography
                 sx={{ display: "inline" }}
