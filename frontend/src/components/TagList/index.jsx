@@ -12,7 +12,6 @@ import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 
-// import tags from "./mockData.json";
 import { useGetTags } from "../../hooks/tags";
 
 const Item = styled(Paper)(({ theme }) => ({

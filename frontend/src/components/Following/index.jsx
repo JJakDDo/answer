@@ -10,9 +10,22 @@ import Typography from "@mui/material/Typography";
 import CommentIcon from "@mui/icons-material/Comment";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
-import following from "./mockData.json";
+import useStore from "../../store/store";
+import { useFetchFollowingTags } from "../../hooks/tags";
 
 export default function Following() {
+  const accessToken = useStore((state) => state.accessToken);
+  const { data: followingResponse } = useFetchFollowingTags(accessToken);
+  const [following, setFollowing] = useState([]);
+
+  if (!accessToken) return null;
+
+  useEffect(() => {
+    if (followingResponse) {
+      setFollowing(followingResponse.data.data);
+    }
+  }, [followingResponse]);
+
   return (
     <List
       sx={{

@@ -17,21 +17,27 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
+import useStore from "../../store/store";
 
 const drawerWidth = 240;
 const navItems = ["Answer", "Questions", "Tags"];
-const buttons = [
+const buttonsBeforeLogin = [
+  <Link key="login" to="/users/login">
+    <Button sx={{ color: "#fff" }}>Log In</Button>
+  </Link>,
+  <Link key="register" to="/users/register">
+    <Button sx={{ color: "#fff" }}>Sign Up</Button>
+  </Link>,
+];
+const buttonsAfterLogin = [
   <Link key="add" to="/questions/ask">
     <Button variant="contained" color="secondary" sx={{ color: "#fff" }}>
       Add Question
     </Button>
   </Link>,
-  <Button key="one" sx={{ color: "#fff" }}>
-    Log In
-  </Button>,
-  <Button key="two" sx={{ color: "#fff" }}>
-    Sign Up
-  </Button>,
+  <Link key="login" to="/users/login">
+    <Button sx={{ color: "#fff" }}>Log out</Button>
+  </Link>,
 ];
 
 const Search = styled("div")(({ theme }) => ({
@@ -76,6 +82,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function Header(props) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const accessToken = useStore((state) => state.accessToken);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -157,7 +164,7 @@ export default function Header(props) {
             aria-label="text  button group"
             sx={{ position: "absolute", right: "30px" }}
           >
-            {buttons}
+            {accessToken ? buttonsAfterLogin : buttonsBeforeLogin}
           </ButtonGroup>
         </Toolbar>
       </AppBar>
