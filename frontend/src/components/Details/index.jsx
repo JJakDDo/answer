@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Parser from "html-react-parser";
 import { Link, useParams } from "react-router-dom";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
@@ -24,6 +27,7 @@ import { convertDateToText } from "../../utils/convertDateToText";
 
 import questions from "../QuestionList/mockData.json";
 import Answers from "../Answers";
+import Comments from "../Comments";
 
 export default function Details() {
   // const { data: questions } = useGetQuestions();
@@ -32,6 +36,7 @@ export default function Details() {
     questions.find((question) => question.id === id)
   );
   const [showComment, setShowComment] = useState(false);
+  const [showEditor, setShowEditor] = useState(false);
 
   const toggleShowComment = () => {
     setShowComment((prev) => !prev);
@@ -116,56 +121,53 @@ export default function Details() {
         </Button>
       </Box>
 
-      <Box
+      <Grid
+        container
         sx={{
           mt: 2,
           mb: 2,
-          display: "flex",
           gap: 10,
-          alignItems: "center",
         }}
       >
-        <ButtonGroup variant="text" size="small">
-          <Button sx={{ borderRight: "none !important" }}>Share</Button>
-          <Button sx={{ borderRight: "none !important" }}>Flag</Button>
-          <Button sx={{ borderRight: "none !important" }}>Edit</Button>
-          <Button sx={{ borderRight: "none !important" }}>Close</Button>
-          <Button>Delete</Button>
-        </ButtonGroup>
-        <Typography component="span" variant="body2" color="text.secondary">
-          Edited {convertDateToText(question.edit_time)}
-        </Typography>
-      </Box>
-
-      <Box
-        sx={{
-          mt: 4,
-          mb: 2,
-        }}
-      >
-        <Button variant="text" size="small" onClick={toggleShowComment}>
-          Add Comment
-        </Button>
-      </Box>
-      {showComment && (
-        <Grid container spacing={1}>
-          <Grid item xs={12} lg={8}>
-            <TextField
-              id="outlined-basic"
-              variant="outlined"
-              size="small"
-              sx={{ width: "100%" }}
-            />
-            <Typography component="span" variant="body2" color="text.secondary">
-              Use comments to ask for more information or suggest improvements.
-              Avoid answering questions in comments.
-            </Typography>
-          </Grid>
-          <Grid item xs={12} lg={4}>
-            <Button variant="contained">Add Comment</Button>
+        <Grid item xs={12} md={3}>
+          <ButtonGroup variant="text" size="small">
+            <Button sx={{ borderRight: "none !important" }}>Share</Button>
+            <Button sx={{ borderRight: "none !important" }}>Flag</Button>
+            <Button sx={{ borderRight: "none !important" }}>Edit</Button>
+            <Button sx={{ borderRight: "none !important" }}>Close</Button>
+            <Button>Delete</Button>
+          </ButtonGroup>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <Typography component="span" variant="body2" color="text.secondary">
+            Edited {convertDateToText(question.edit_time)}
+          </Typography>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <Grid container wrap="nowrap" spacing={2}>
+            <Grid item>
+              <Avatar src={question.user_info.avatar} />
+            </Grid>
+            <Grid justifyContent="left" item xs zeroMinWidth>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                <Box>
+                  <h4 style={{ margin: 0, textAlign: "left" }}>
+                    {question.user_info.display_name}
+                  </h4>
+                  <Typography
+                    component="span"
+                    variant="body2"
+                    color="text.secondary"
+                  >
+                    asked {convertDateToText(question.create_time)}
+                  </Typography>
+                </Box>
+              </Box>
+            </Grid>
           </Grid>
         </Grid>
-      )}
+      </Grid>
+      <Comments />
 
       <Box
         sx={{
@@ -182,9 +184,25 @@ export default function Details() {
           mb: 2,
         }}
       >
-        <Button variant="contained" size="small">
-          Post your answer
-        </Button>
+        {showEditor ? (
+          <Box>
+            <Typography component="span" variant="h6" color="text.primary">
+              Your Answer
+            </Typography>
+            <ReactQuill style={{ marginTop: "10px", marginBottom: "10px" }} />
+            <Button variant="contained" size="small">
+              Post your answer
+            </Button>
+          </Box>
+        ) : (
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => setShowEditor(true)}
+          >
+            Post your answer
+          </Button>
+        )}
       </Box>
     </Box>
   );

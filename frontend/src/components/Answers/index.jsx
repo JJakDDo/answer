@@ -21,6 +21,7 @@ import { useGetQuestions } from "../../hooks/questions";
 import { convertDateToText } from "../../utils/convertDateToText";
 
 import answers from "./mockData.json";
+import Comments from "../Comments";
 
 export default function Answers() {
   // const { data: questions } = useGetQuestions();
@@ -60,22 +61,39 @@ export default function Answers() {
                   <Avatar src={answer.user_info.avatar} />
                 </Grid>
                 <Grid justifyContent="left" item xs zeroMinWidth>
-                  <Box>
-                    <h4 style={{ margin: 0, textAlign: "left" }}>
-                      {answer.user_info.display_name}
-                    </h4>
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      color="text.secondary"
-                    >
-                      answered {convertDateToText(answer.create_time)}
-                    </Typography>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    <Box>
+                      <h4 style={{ margin: 0, textAlign: "left" }}>
+                        {answer.user_info.display_name}
+                      </h4>
+                      <Typography
+                        component="span"
+                        variant="body2"
+                        color="text.secondary"
+                      >
+                        answered {convertDateToText(answer.create_time)}
+                      </Typography>
+                    </Box>
+                    <Button variant="outlined" size="small">
+                      Accept
+                    </Button>
                   </Box>
                   <p style={{ textAlign: "left" }}>{Parser(answer.html)}</p>
-                  <p style={{ textAlign: "left", color: "gray" }}>
-                    posted 1 minute ago
-                  </p>
+                  <Comments />
+                </Grid>
+                <Grid sx={{ textAlign: "right" }} item xs zeroMinWidth>
+                  <ButtonGroup variant="text" size="small">
+                    <Button sx={{ borderRight: "none !important" }}>
+                      Share
+                    </Button>
+                    <Button sx={{ borderRight: "none !important" }}>
+                      Flag
+                    </Button>
+                    <Button sx={{ borderRight: "none !important" }}>
+                      Edit
+                    </Button>
+                    <Button>Delete</Button>
+                  </ButtonGroup>
                 </Grid>
               </Grid>
             </React.Fragment>
