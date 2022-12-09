@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -15,8 +15,9 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 import { useGetQuestions } from "../../hooks/questions";
 import { convertDateToText } from "../../utils/convertDateToText";
+import { useEffect } from "react";
 
-import questions from "./mockData.json";
+// import questions from "./mockData.json";
 
 const MONTH_MAP = [
   "Jan",
@@ -38,7 +39,20 @@ function getStatusText(status) {
 }
 
 export default function QuestionList() {
-  // const { data: questions } = useGetQuestions();
+  const [order, setOrder] = useState("newest");
+  const [list, setList] = useState([]);
+  const { data: questions } = useGetQuestions(order);
+  const changeOrder = (newOrder) => {
+    if (order !== newOrder) {
+      setOrder(newOrder);
+    }
+  };
+
+  useEffect(() => {
+    if (questions) {
+      setList(questions.data.data.list);
+    }
+  }, [questions]);
   return (
     <Box>
       <Box
@@ -57,16 +71,41 @@ export default function QuestionList() {
           size="small"
           aria-label="outlined button group"
         >
-          <Button>Newest</Button>
-          <Button>Active</Button>
-          <Button>Frequent</Button>
-          <Button>Score</Button>
-          <Button>Unanswered</Button>
+          <Button
+            variant={order === "newest" ? "contained" : "outlined"}
+            onClick={() => changeOrder("newest")}
+          >
+            Newest
+          </Button>
+          <Button
+            variant={order === "active" ? "contained" : "outlined"}
+            onClick={() => changeOrder("active")}
+          >
+            Active
+          </Button>
+          <Button
+            variant={order === "frequent" ? "contained" : "outlined"}
+            onClick={() => changeOrder("frequent")}
+          >
+            Frequent
+          </Button>
+          <Button
+            variant={order === "score" ? "contained" : "outlined"}
+            onClick={() => changeOrder("score")}
+          >
+            Score
+          </Button>
+          <Button
+            variant={order === "unanswered" ? "contained" : "outlined"}
+            onClick={() => changeOrder("unanswered")}
+          >
+            Unanswered
+          </Button>
         </ButtonGroup>
       </Box>
       <Divider />
       <List sx={{ bgcolor: "background.paper" }}>
-        {questions.map((question) => (
+        {list.map((question) => (
           <React.Fragment key={question.id}>
             <Link to={`/questions/${question.id}`}>
               <ListItem alignItems="flex-start" sx={{ pl: 0 }}>

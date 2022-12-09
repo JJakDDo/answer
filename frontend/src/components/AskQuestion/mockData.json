@@ -1,0 +1,57 @@
+{
+  "count": 4,
+  "list": [
+    {
+      "tag_id": "10030000000000002",
+      "slug_name": "test",
+      "display_name": "test",
+      "excerpt": "",
+      "original_text": "",
+      "parsed_text": "",
+      "follow_count": 0,
+      "question_count": 1,
+      "is_follower": false,
+      "created_at": 1668755173,
+      "updated_at": 1670302172
+    },
+    {
+      "tag_id": "10030000000000004",
+      "slug_name": "123abc",
+      "display_name": "질문 기사들",
+      "excerpt": "",
+      "original_text": "",
+      "parsed_text": "",
+      "follow_count": 1,
+      "question_count": 1,
+      "is_follower": false,
+      "created_at": 1668915154,
+      "updated_at": 1668915837
+    },
+    {
+      "tag_id": "10030000000000006",
+      "slug_name": "cafe24",
+      "display_name": "카페24",
+      "excerpt": "",
+      "original_text": "카페 24와 관련된 모든 내용들",
+      "parsed_text": "\u003cp\u003e카페 24와 관련된 모든 내용들\u003c/p\u003e",
+      "follow_count": 0,
+      "question_count": 1,
+      "is_follower": false,
+      "created_at": 1668915818,
+      "updated_at": 1668915818
+    },
+    {
+      "tag_id": "10030000000000008",
+      "slug_name": "tennis",
+      "display_name": "테니스",
+      "excerpt": "",
+      "original_text": "테니스 관련",
+      "parsed_text": "\u003cp\u003e테니스 관련 \u003c/p\u003e",
+      "follow_count": 0,
+      "question_count": 1,
+      "is_follower": false,
+      "created_at": 1668916198,
+      "updated_at": 1668916199
+    }
+  ]
+}

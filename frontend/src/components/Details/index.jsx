@@ -22,27 +22,28 @@ import CommentIcon from "@mui/icons-material/Comment";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
-import { useGetQuestions } from "../../hooks/questions";
+import { useGetQuestions, useGetSingleQuestion } from "../../hooks/questions";
 import { convertDateToText } from "../../utils/convertDateToText";
 
-import questions from "../QuestionList/mockData.json";
+// import questions from "../QuestionList/mockData.json";
 import Answers from "../Answers";
 import Comments from "../Comments";
 
 export default function Details() {
   // const { data: questions } = useGetQuestions();
   const { id } = useParams();
-  const [question, setQuestion] = useState(
-    questions.find((question) => question.id === id)
-  );
-  const [showComment, setShowComment] = useState(false);
+  const [question, setQuestion] = useState(null);
+  const { data: questionResponse } = useGetSingleQuestion(id);
   const [showEditor, setShowEditor] = useState(false);
 
-  const toggleShowComment = () => {
-    setShowComment((prev) => !prev);
-  };
+  useEffect(() => {
+    if (questionResponse) {
+      setQuestion(questionResponse.data.data);
+    }
+  }, [questionResponse]);
 
-  console.log(question);
+  if (!question) return null;
+
   return (
     <Box>
       <Typography component="span" variant="h5" color="text.primary">

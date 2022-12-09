@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -12,8 +12,7 @@ import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 
-// import tags from "./mockData.json";
-import { useGetTags } from "../../hooks/tags";
+import tags from "./mockData.json";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -26,28 +25,12 @@ const Item = styled(Paper)(({ theme }) => ({
   height: "70%",
 }));
 
-export default function QuestionList() {
+export default function AskQuestion() {
   // const { data: questions } = useGetQuestions();
-  const [order, setOrder] = useState("popular");
-  const [tags, setTags] = useState(null);
-  const { data: tagResponse } = useGetTags(order);
-
-  const changeOrder = (newOrder) => {
-    setOrder(newOrder);
-  };
-
-  useEffect(() => {
-    if (tagResponse) {
-      setTags(tagResponse.data.data);
-    }
-  }, [tagResponse]);
-
-  if (!tags) return null;
-
   return (
     <Box sx={{ width: "90%", maxWidth: "1100px", minWidth: "450px" }}>
       <Typography component="span" variant="h4" color="text.primary">
-        Tags
+        Add Question
       </Typography>
       <Box
         sx={{
@@ -69,24 +52,9 @@ export default function QuestionList() {
           size="small"
           aria-label="outlined button group"
         >
-          <Button
-            variant={order === "popular" ? "contained" : "outlined"}
-            onClick={() => changeOrder("popular")}
-          >
-            Popular
-          </Button>
-          <Button
-            variant={order === "name" ? "contained" : "outlined"}
-            onClick={() => changeOrder("name")}
-          >
-            Name
-          </Button>
-          <Button
-            variant={order === "newest" ? "contained" : "outlined"}
-            onClick={() => changeOrder("newest")}
-          >
-            Newest
-          </Button>
+          <Button>Popular</Button>
+          <Button>Name</Button>
+          <Button>Newest</Button>
         </ButtonGroup>
       </Box>
       <Grid container spacing={2} sx={{ alignItems: "stretch" }}>

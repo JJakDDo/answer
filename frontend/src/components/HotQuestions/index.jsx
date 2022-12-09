@@ -8,13 +8,17 @@ import Typography from "@mui/material/Typography";
 import CommentIcon from "@mui/icons-material/Comment";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
-import questions from "./mockData.json";
+import { useGetQuestions } from "../../hooks/questions";
+// import questions from "./mockData.json";
 
 export default function HotQuestions() {
   const [hotQuestions, setHotQuestions] = useState([]);
+  const { data: questions } = useGetQuestions("frequent");
 
   useEffect(() => {
-    setHotQuestions(questions.sort((a, b) => b.view_count - a.view_count));
+    if (questions) {
+      setHotQuestions(questions.data.data.list);
+    }
   }, [questions]);
 
   return (

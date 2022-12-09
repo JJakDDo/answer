@@ -21,6 +21,11 @@ import Typography from "@mui/material/Typography";
 const drawerWidth = 240;
 const navItems = ["Answer", "Questions", "Tags"];
 const buttons = [
+  <Link key="add" to="/questions/ask">
+    <Button variant="contained" color="secondary" sx={{ color: "#fff" }}>
+      Add Question
+    </Button>
+  </Link>,
   <Button key="one" sx={{ color: "#fff" }}>
     Log In
   </Button>,
