@@ -13,6 +13,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 
 import { useGetTags } from "../../hooks/tags";
+import useStore from "../../store/store";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -29,7 +30,8 @@ export default function QuestionList() {
   // const { data: questions } = useGetQuestions();
   const [order, setOrder] = useState("popular");
   const [tags, setTags] = useState(null);
-  const { data: tagResponse } = useGetTags(order);
+  const accessToken = useStore((state) => state.accessToken);
+  const { data: tagResponse } = useGetTags(order, accessToken);
 
   const changeOrder = (newOrder) => {
     setOrder(newOrder);
@@ -114,8 +116,11 @@ export default function QuestionList() {
                 />
               )}
               <Box>
-                <Button variant="outlined" size="small">
-                  Follow
+                <Button
+                  size="small"
+                  variant={tag.is_follower ? "contained" : "outlined"}
+                >
+                  {tag.is_follower ? "Following" : "Follow"}
                 </Button>
                 <Typography
                   sx={{ display: "inline", pl: 1 }}

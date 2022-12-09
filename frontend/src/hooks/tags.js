@@ -1,22 +1,27 @@
 import { useQuery } from "react-query";
 import axios from "axios";
 
-const fetchTags = (order) => {
+const fetchTags = (order, accessToken) => {
   return axios.get(
-    `http://tessverso.io:9080/answer/api/v1/tags/page?query_cond=${order}`
+    `http://tessverso.io:9080/answer/api/v1/tags/page?query_cond=${order}`,
+    {
+      headers: {
+        Authorization: accessToken,
+      },
+    }
   );
 };
 
 const fetchFollowingTags = (accessToken) => {
   return axios.get(`http://tessverso.io:9080/answer/api/v1/tags/following`, {
     headers: {
-      Authorization: `bearer ${accessToken}`,
+      Authorization: `${accessToken}`,
     },
   });
 };
 
-export const useGetTags = (order) => {
-  return useQuery(["tags", order], () => fetchTags(order));
+export const useGetTags = (order, accessToken) => {
+  return useQuery(["tags", order], () => fetchTags(order, accessToken));
 };
 
 export const useFetchFollowingTags = (accessToken) => {
