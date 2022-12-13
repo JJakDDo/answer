@@ -20,10 +20,27 @@ const fetchFollowingTags = (accessToken) => {
   });
 };
 
+const searchTag = (accessToken, tag) => {
+  return axios.get(
+    `http://tessverso.io:9080/answer/api/v1/question/tags?tag=${tag}`,
+    {
+      headers: {
+        Authorization: `${accessToken}`,
+      },
+    }
+  );
+};
+
 export const useGetTags = (order, accessToken) => {
   return useQuery(["tags", order], () => fetchTags(order, accessToken));
 };
 
 export const useFetchFollowingTags = (accessToken) => {
   return useQuery(["followingTags"], () => fetchFollowingTags(accessToken));
+};
+
+export const useSearchTag = (accessToken, tag) => {
+  return useQuery(["tag", tag], () => searchTag(accessToken, tag), {
+    enabled: !!tag,
+  });
 };

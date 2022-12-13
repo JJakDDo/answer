@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState, useRef } from "react";
+import ReactQuill from "react-quill";
+import { useNavigate } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -8,11 +10,16 @@ import Grid from "@mui/material/Grid";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 
 import tags from "./mockData.json";
+import AddTag from "../AddTag";
+import { useAddQuestion } from "../../hooks/questions";
+import useStore from "../../store/store";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -26,7 +33,38 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 export default function AskQuestion() {
+  const navigate = useNavigate();
   // const { data: questions } = useGetQuestions();
+  const onSuccess = (data) => {
+    console.log(data);
+    navigate(`/questions/${data.data.data.id}`);
+  };
+  const { mutate: addQuestion } = useAddQuestion(onSuccess);
+  const accessToken = useStore((state) => state.accessToken);
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [selectedTag, setSelectedTag] = useState([]);
+  const titleRef = useRef(null);
+  const questionRef = useRef(null);
+  const answerRef = useRef(null);
+
+  const onPostQuestion = () => {
+    console.log(titleRef.current.value);
+    console.log(questionRef.current.value);
+    addQuestion({
+      accessToken,
+      body: {
+        content: questionRef.current.value,
+        html: questionRef.current.value,
+        tags: selectedTag.map((tag) => ({
+          slug_name: tag,
+        })),
+        title: titleRef.current.value,
+      },
+    });
+    if (showAnswer) {
+      console.log(answerRef.current.value);
+    }
+  };
   return (
     <Box sx={{ width: "90%", maxWidth: "1100px", minWidth: "450px" }}>
       <Typography component="span" variant="h4" color="text.primary">
@@ -35,70 +73,71 @@ export default function AskQuestion() {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          flexDirection: "column",
           mt: 2,
           mb: 2,
         }}
       >
+        <Typography component="span" variant="h6" color="text.primary">
+          Title
+        </Typography>
         <TextField
           id="outlined-basic"
-          label="Filter by tag name"
+          placeholder="Be specific and imagine you're asking a question to another person"
           variant="outlined"
           size="small"
+          inputRef={titleRef}
         />
-        <ButtonGroup
-          variant="outlined"
-          size="small"
-          aria-label="outlined button group"
-        >
-          <Button>Popular</Button>
-          <Button>Name</Button>
-          <Button>Newest</Button>
-        </ButtonGroup>
+        <Typography component="span" variant="h6" color="text.primary">
+          Body
+        </Typography>
+        <ReactQuill
+          style={{ marginTop: "10px", marginBottom: "10px" }}
+          ref={(element) => {
+            if (element !== null) questionRef.current = element;
+          }}
+        />
+        <Typography component="span" variant="h6" color="text.primary">
+          Tags
+        </Typography>
+        <AddTag selectedTag={selectedTag} setSelectedTag={setSelectedTag} />
+        <Typography component="span" variant="subtitle2" color="text.secondary">
+          Describe what your question is about, at least one tag is required.
+        </Typography>
+        {!showAnswer && (
+          <Box>
+            <Button variant="contained" size="small" onClick={onPostQuestion}>
+              Post your question
+            </Button>
+            <Button variant="outlined" size="small">
+              Cancel
+            </Button>
+          </Box>
+        )}
+
+        <FormControlLabel
+          control={
+            <Checkbox onChange={(e) => setShowAnswer(e.target.checked)} />
+          }
+          label="Answer your own question"
+        />
+        {showAnswer && (
+          <Box>
+            <Typography component="span" variant="h6" color="text.primary">
+              Answer
+            </Typography>
+            <ReactQuill
+              style={{ marginTop: "10px", marginBottom: "10px" }}
+              ref={(element) => {
+                if (element !== null) answerRef.current = element;
+              }}
+            />
+            <Button variant="contained" size="small">
+              Post your question and answer
+            </Button>
+          </Box>
+        )}
       </Box>
-      <Grid container spacing={2} sx={{ alignItems: "stretch" }}>
-        {tags.list.map((tag) => (
-          <Grid key={tag.id} item xs={12} sm={6} md={4} lg={3}>
-            <Item>
-              <Chip label={tag.slug_name} size="small" color="primary" />
-              {tag.original_text ? (
-                <Typography
-                  sx={{ display: "inline", pt: 2, pb: 2 }}
-                  component="span"
-                  variant="subtitle2"
-                  color="text.primary"
-                >
-                  {tag.original_text}
-                </Typography>
-              ) : (
-                <Box
-                  sx={{
-                    width: "100%",
-                    height: "20px",
-                    display: "inline",
-                    pt: 2,
-                    pb: 2,
-                  }}
-                />
-              )}
-              <Box>
-                <Button variant="outlined" size="small">
-                  Follow
-                </Button>
-                <Typography
-                  sx={{ display: "inline", pl: 1 }}
-                  component="span"
-                  variant="body2"
-                  color="text.secondary"
-                >
-                  {tag.question_count} questions
-                </Typography>
-              </Box>
-            </Item>
-          </Grid>
-        ))}
-      </Grid>
     </Box>
   );
 }

@@ -6,13 +6,13 @@ export default function Ask() {
   return (
     <Grid
       container
-      spacing={2}
       sx={{
         position: "absolute",
         top: "100px",
         width: "100vw",
-        paddingLeft: "10%",
-        paddingRight: "10%",
+        display: "flex",
+        gap: 5,
+        justifyContent: "center",
         minWidth: "500px",
       }}
     >
