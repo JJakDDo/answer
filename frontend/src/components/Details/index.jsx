@@ -176,7 +176,7 @@ export default function Details() {
           mb: 2,
         }}
       >
-        <Answers />
+        <Answers id={id} />
       </Box>
 
       <Box

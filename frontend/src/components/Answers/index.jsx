@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Parser from "html-react-parser";
 import { Link } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
@@ -22,10 +22,20 @@ import { convertDateToText } from "../../utils/convertDateToText";
 
 import answers from "./mockData.json";
 import Comments from "../Comments";
+import { useGetAnswers } from "../../hooks/answers";
 
-export default function Answers() {
+export default function Answers({ id }) {
   // const { data: questions } = useGetQuestions();
-  if (answers.count === 0) return null;
+  const [answers, setAnswers] = useState(null);
+  const { data: answerResponse } = useGetAnswers("default", id);
+
+  useEffect(() => {
+    if (answerResponse) {
+      setAnswers(answerResponse.data.data);
+    }
+  }, [answerResponse]);
+
+  if (!answers || answers.count === 0) return null;
 
   return (
     <Box>

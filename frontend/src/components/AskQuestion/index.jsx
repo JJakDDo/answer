@@ -20,6 +20,7 @@ import tags from "./mockData.json";
 import AddTag from "../AddTag";
 import { useAddQuestion } from "../../hooks/questions";
 import useStore from "../../store/store";
+import { useAddAnswer } from "../../hooks/answers";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -35,11 +36,6 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function AskQuestion() {
   const navigate = useNavigate();
   // const { data: questions } = useGetQuestions();
-  const onSuccess = (data) => {
-    console.log(data);
-    navigate(`/questions/${data.data.data.id}`);
-  };
-  const { mutate: addQuestion } = useAddQuestion(onSuccess);
   const accessToken = useStore((state) => state.accessToken);
   const [showAnswer, setShowAnswer] = useState(false);
   const [selectedTag, setSelectedTag] = useState([]);
@@ -47,9 +43,12 @@ export default function AskQuestion() {
   const questionRef = useRef(null);
   const answerRef = useRef(null);
 
-  const onPostQuestion = () => {
-    console.log(titleRef.current.value);
-    console.log(questionRef.current.value);
+  const onAddAnswerSuccess = (data) => {
+    console.log(data);
+    navigate(`/questions/${data.data.data.question.id}`);
+  };
+  const { mutate: addAnswer } = useAddAnswer(onAddAnswerSuccess);
+  const onSuccess = (data) => {
     addQuestion({
       accessToken,
       body: {
@@ -61,9 +60,33 @@ export default function AskQuestion() {
         title: titleRef.current.value,
       },
     });
-    if (showAnswer) {
-      console.log(answerRef.current.value);
+    if (answerRef.current) {
+      addAnswer({
+        accessToken,
+        body: {
+          continue: answerRef.current.value,
+          html: answerRef.current.value,
+          question_id: data.data.data.id,
+        },
+      });
+    } else {
+      navigate(`/questions/${data.data.data.id}`);
     }
+  };
+  const { mutate: addQuestion } = useAddQuestion(onSuccess);
+
+  const onPostQuestion = () => {
+    addQuestion({
+      accessToken,
+      body: {
+        content: questionRef.current.value,
+        html: questionRef.current.value,
+        tags: selectedTag.map((tag) => ({
+          slug_name: tag,
+        })),
+        title: titleRef.current.value,
+      },
+    });
   };
   return (
     <Box sx={{ width: "90%", maxWidth: "1100px", minWidth: "450px" }}>
@@ -132,7 +155,7 @@ export default function AskQuestion() {
                 if (element !== null) answerRef.current = element;
               }}
             />
-            <Button variant="contained" size="small">
+            <Button variant="contained" size="small" onClick={onPostQuestion}>
               Post your question and answer
             </Button>
           </Box>
