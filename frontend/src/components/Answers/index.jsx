@@ -23,10 +23,12 @@ import { convertDateToText } from "../../utils/convertDateToText";
 import answers from "./mockData.json";
 import Comments from "../Comments";
 import { useGetAnswers } from "../../hooks/answers";
+import useStore from "../../store/store";
 
 export default function Answers({ id }) {
   // const { data: questions } = useGetQuestions();
   const [answers, setAnswers] = useState(null);
+  const username = useStore((state) => state.username);
   const { data: answerResponse } = useGetAnswers("default", id);
 
   useEffect(() => {
@@ -99,10 +101,14 @@ export default function Answers({ id }) {
                     <Button sx={{ borderRight: "none !important" }}>
                       Flag
                     </Button>
-                    <Button sx={{ borderRight: "none !important" }}>
-                      Edit
-                    </Button>
-                    <Button>Delete</Button>
+                    {answer.user_info.username === username && (
+                      <>
+                        <Button sx={{ borderRight: "none !important" }}>
+                          Edit
+                        </Button>
+                        <Button>Delete</Button>
+                      </>
+                    )}
                   </ButtonGroup>
                 </Grid>
               </Grid>

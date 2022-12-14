@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Parser from "html-react-parser";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Avatar from "@mui/material/Avatar";
@@ -22,19 +22,69 @@ import CommentIcon from "@mui/icons-material/Comment";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
-import { useGetQuestions, useGetSingleQuestion } from "../../hooks/questions";
+import {
+  useDeleteQuestion,
+  useGetQuestions,
+  useGetSingleQuestion,
+} from "../../hooks/questions";
 import { convertDateToText } from "../../utils/convertDateToText";
 
 // import questions from "../QuestionList/mockData.json";
 import Answers from "../Answers";
 import Comments from "../Comments";
+import { useAddAnswer } from "../../hooks/answers";
+import useStore from "../../store/store";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 export default function Details() {
   // const { data: questions } = useGetQuestions();
+  const navigate = useNavigate();
   const { id } = useParams();
+  const accessToken = useStore((state) => state.accessToken);
+  const username = useStore((state) => state.username);
   const [question, setQuestion] = useState(null);
   const { data: questionResponse } = useGetSingleQuestion(id);
   const [showEditor, setShowEditor] = useState(false);
+  const answerRef = useRef(null);
+  const [open, setOpen] = useState(false);
+
+  const onDeleteSuccess = () => {
+    navigate("/");
+  };
+  const { mutate: deleteQuestion } = useDeleteQuestion(onDeleteSuccess);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleDelete = (id) => {
+    deleteQuestion({ accessToken, id });
+  };
+  const onAddAnswerSuccess = (data) => {
+    navigate(`/questions/${data.data.data.question.id}`);
+  };
+  const { mutate: addAnswer } = useAddAnswer(onAddAnswerSuccess);
+
+  const handlePostAnswer = () => {
+    if (answerRef.current) {
+      addAnswer({
+        accessToken,
+        body: {
+          content: answerRef.current.value,
+          html: answerRef.current.value,
+          question_id: id,
+        },
+      });
+    }
+  };
 
   useEffect(() => {
     if (questionResponse) {
@@ -134,9 +184,34 @@ export default function Details() {
           <ButtonGroup variant="text" size="small">
             <Button sx={{ borderRight: "none !important" }}>Share</Button>
             <Button sx={{ borderRight: "none !important" }}>Flag</Button>
-            <Button sx={{ borderRight: "none !important" }}>Edit</Button>
-            <Button sx={{ borderRight: "none !important" }}>Close</Button>
-            <Button>Delete</Button>
+            {username === question.user_info.username && (
+              <>
+                <Button sx={{ borderRight: "none !important" }}>Edit</Button>
+                <Button sx={{ borderRight: "none !important" }}>Close</Button>
+                <Button onClick={handleClickOpen}>Delete</Button>
+                <Dialog
+                  open={open}
+                  onClose={handleClose}
+                  aria-labelledby="alert-dialog-title"
+                  aria-describedby="alert-dialog-description"
+                >
+                  <DialogTitle id="alert-dialog-title">
+                    {"Delete this post"}
+                  </DialogTitle>
+                  <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                      Are you sure you wish to delete?
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={() => handleDelete(question.id)} autoFocus>
+                      Delete
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+              </>
+            )}
           </ButtonGroup>
         </Grid>
         <Grid item xs={12} md={3}>
@@ -190,8 +265,13 @@ export default function Details() {
             <Typography component="span" variant="h6" color="text.primary">
               Your Answer
             </Typography>
-            <ReactQuill style={{ marginTop: "10px", marginBottom: "10px" }} />
-            <Button variant="contained" size="small">
+            <ReactQuill
+              style={{ marginTop: "10px", marginBottom: "10px" }}
+              ref={(element) => {
+                if (element !== null) answerRef.current = element;
+              }}
+            />
+            <Button variant="contained" size="small" onClick={handlePostAnswer}>
               Post your answer
             </Button>
           </Box>

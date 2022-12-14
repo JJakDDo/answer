@@ -10,8 +10,10 @@ import useStore from "../../store/store";
 export default function Login() {
   const navigate = useNavigate();
   const setAccessToken = useStore((state) => state.setAccessToken);
+  const setUsername = useStore((state) => state.setUsername);
   const onSuccess = (response) => {
     setAccessToken(response.data.data.access_token);
+    setUsername(response.data.data.username);
     navigate("/");
   };
   const { mutate: login } = useLogin(onSuccess);

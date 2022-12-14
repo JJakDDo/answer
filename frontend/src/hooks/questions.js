@@ -22,6 +22,15 @@ const addQuestion = (data) => {
   });
 };
 
+const deleteQuestion = ({ accessToken, id }) => {
+  return axios.delete(`http://tessverso.io:9080/answer/api/v1/question`, {
+    headers: {
+      Authorization: accessToken,
+    },
+    data: { id },
+  });
+};
+
 export const useGetQuestions = (order) => {
   return useQuery(["questions", order], () => fetchQuestions(order));
 };
@@ -32,6 +41,12 @@ export const useGetSingleQuestion = (id) => {
 
 export const useAddQuestion = (onSuccess) => {
   return useMutation(addQuestion, {
+    onSuccess,
+  });
+};
+
+export const useDeleteQuestion = (onSuccess) => {
+  return useMutation(deleteQuestion, {
     onSuccess,
   });
 };

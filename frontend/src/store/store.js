@@ -5,7 +5,9 @@ const useStore = create(
   persist(
     (set) => ({
       accessToken: "",
+      username: "",
       setAccessToken: (token) => set(() => ({ accessToken: token })),
+      setUsername: (name) => set(() => ({ username: name })),
     }),
     {
       name: "answers",

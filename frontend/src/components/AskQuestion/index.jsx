@@ -64,7 +64,7 @@ export default function AskQuestion() {
       addAnswer({
         accessToken,
         body: {
-          continue: answerRef.current.value,
+          content: answerRef.current.value,
           html: answerRef.current.value,
           question_id: data.data.data.id,
         },
