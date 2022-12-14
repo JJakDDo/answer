@@ -26,14 +26,13 @@ export default function Following() {
     setEditMode((prev) => !prev);
   };
 
-  if (!accessToken) return null;
-
   useEffect(() => {
     if (followingResponse) {
       setFollowing(followingResponse.data.data);
     }
   }, [followingResponse]);
 
+  if (!accessToken) return null;
   return (
     <List
       sx={{

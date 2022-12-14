@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useQuery, useMutation } from "react-query";
 import axios from "axios";
 
 const fetchTags = (order, accessToken) => {
@@ -18,6 +18,21 @@ const fetchFollowingTags = (accessToken) => {
       Authorization: `${accessToken}`,
     },
   });
+};
+
+const followTag = ({ accessToken, object_id, is_cancel }) => {
+  return axios.post(
+    `http://tessverso.io:9080/answer/api/v1/follow`,
+    {
+      is_cancel,
+      object_id,
+    },
+    {
+      headers: {
+        Authorization: accessToken,
+      },
+    }
+  );
 };
 
 const searchTag = (accessToken, tag) => {
@@ -43,4 +58,8 @@ export const useSearchTag = (accessToken, tag) => {
   return useQuery(["tag", tag], () => searchTag(accessToken, tag), {
     enabled: !!tag,
   });
+};
+
+export const useFollowTag = (onSuccess) => {
+  return useMutation(followTag, { onSuccess });
 };

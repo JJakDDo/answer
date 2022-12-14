@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -12,7 +13,7 @@ import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 
-import { useGetTags } from "../../hooks/tags";
+import { useFollowTag, useGetTags } from "../../hooks/tags";
 import useStore from "../../store/store";
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -28,13 +29,27 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function QuestionList() {
   // const { data: questions } = useGetQuestions();
+  const navigate = useNavigate();
   const [order, setOrder] = useState("popular");
   const [tags, setTags] = useState(null);
   const accessToken = useStore((state) => state.accessToken);
-  const { data: tagResponse } = useGetTags(order, accessToken);
+  const { data: tagResponse, refetch } = useGetTags(order, accessToken);
+
+  const onSuccess = () => {
+    refetch();
+  };
+  const { mutate: followTag } = useFollowTag(onSuccess);
 
   const changeOrder = (newOrder) => {
     setOrder(newOrder);
+  };
+
+  const onFollow = (object_id, isFollower) => {
+    if (accessToken) {
+      followTag({ accessToken, object_id, is_cancel: isFollower });
+    } else {
+      navigate("/users/login");
+    }
   };
 
   useEffect(() => {
@@ -92,7 +107,7 @@ export default function QuestionList() {
       </Box>
       <Grid container spacing={2} sx={{ alignItems: "stretch" }}>
         {tags.list.map((tag) => (
-          <Grid key={tag.id} item xs={12} sm={6} md={4} lg={3}>
+          <Grid key={tag.tag_id} item xs={12} sm={6} md={4} lg={3}>
             <Item>
               <Chip label={tag.slug_name} size="small" color="primary" />
               {tag.original_text ? (
@@ -119,6 +134,9 @@ export default function QuestionList() {
                 <Button
                   size="small"
                   variant={tag.is_follower ? "contained" : "outlined"}
+                  onClick={() => {
+                    onFollow(tag.tag_id, tag.is_follower);
+                  }}
                 >
                   {tag.is_follower ? "Following" : "Follow"}
                 </Button>

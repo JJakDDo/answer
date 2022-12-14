@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -21,24 +22,6 @@ import useStore from "../../store/store";
 
 const drawerWidth = 240;
 const navItems = ["Answer", "Questions", "Tags"];
-const buttonsBeforeLogin = [
-  <Link key="login" to="/users/login">
-    <Button sx={{ color: "#fff" }}>Log In</Button>
-  </Link>,
-  <Link key="register" to="/users/register">
-    <Button sx={{ color: "#fff" }}>Sign Up</Button>
-  </Link>,
-];
-const buttonsAfterLogin = [
-  <Link key="add" to="/questions/ask">
-    <Button variant="contained" color="secondary" sx={{ color: "#fff" }}>
-      Add Question
-    </Button>
-  </Link>,
-  <Link key="login" to="/users/login">
-    <Button sx={{ color: "#fff" }}>Log out</Button>
-  </Link>,
-];
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -81,9 +64,40 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function Header(props) {
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const accessToken = useStore((state) => state.accessToken);
+  const setAccessToken = useStore((state) => state.setAccessToken);
 
+  const onLogout = async () => {
+    await axios.get(`http://tessverso.io:9080/answer/api/v1/user/logout`, {
+      headers: {
+        Authorization: accessToken,
+      },
+    });
+
+    setAccessToken("");
+    navigate("/");
+  };
+
+  const buttonsBeforeLogin = [
+    <Link key="login" to="/users/login">
+      <Button sx={{ color: "#fff" }}>Log In</Button>
+    </Link>,
+    <Link key="register" to="/users/register">
+      <Button sx={{ color: "#fff" }}>Sign Up</Button>
+    </Link>,
+  ];
+  const buttonsAfterLogin = [
+    <Link key="add" to="/questions/ask">
+      <Button variant="contained" color="secondary" sx={{ color: "#fff" }}>
+        Add Question
+      </Button>
+    </Link>,
+    <Button key="logout" sx={{ color: "#fff" }} onClick={onLogout}>
+      Log out
+    </Button>,
+  ];
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };

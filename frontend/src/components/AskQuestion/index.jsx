@@ -44,7 +44,6 @@ export default function AskQuestion() {
   const answerRef = useRef(null);
 
   const onAddAnswerSuccess = (data) => {
-    console.log(data);
     navigate(`/questions/${data.data.data.question.id}`);
   };
   const { mutate: addAnswer } = useAddAnswer(onAddAnswerSuccess);
@@ -54,9 +53,10 @@ export default function AskQuestion() {
       body: {
         content: questionRef.current.value,
         html: questionRef.current.value,
-        tags: selectedTag.map((tag) => ({
-          slug_name: tag,
-        })),
+        // tags: selectedTag.map((tag) => ({
+        //   slug_name: tag,
+        // })),
+        tags: selectedTag,
         title: titleRef.current.value,
       },
     });
@@ -81,9 +81,7 @@ export default function AskQuestion() {
       body: {
         content: questionRef.current.value,
         html: questionRef.current.value,
-        tags: selectedTag.map((tag) => ({
-          slug_name: tag,
-        })),
+        tags: selectedTag,
         title: titleRef.current.value,
       },
     });
