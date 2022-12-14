@@ -3,7 +3,7 @@ import axios from "axios";
 
 const fetchTags = (order, accessToken) => {
   return axios.get(
-    `http://tessverso.io:9080/answer/api/v1/tags/page?query_cond=${order}`,
+    `https://tessverso.io:9080/answer/api/v1/tags/page?query_cond=${order}`,
     {
       headers: {
         Authorization: accessToken,
@@ -13,7 +13,7 @@ const fetchTags = (order, accessToken) => {
 };
 
 const fetchFollowingTags = (accessToken) => {
-  return axios.get(`http://tessverso.io:9080/answer/api/v1/tags/following`, {
+  return axios.get(`https://tessverso.io:9080/answer/api/v1/tags/following`, {
     headers: {
       Authorization: `${accessToken}`,
     },
@@ -22,7 +22,7 @@ const fetchFollowingTags = (accessToken) => {
 
 const followTag = ({ accessToken, object_id, is_cancel }) => {
   return axios.post(
-    `http://tessverso.io:9080/answer/api/v1/follow`,
+    `https://tessverso.io:9080/answer/api/v1/follow`,
     {
       is_cancel,
       object_id,
@@ -37,7 +37,7 @@ const followTag = ({ accessToken, object_id, is_cancel }) => {
 
 const searchTag = (accessToken, tag) => {
   return axios.get(
-    `http://tessverso.io:9080/answer/api/v1/question/tags?tag=${tag}`,
+    `https://tessverso.io:9080/answer/api/v1/question/tags?tag=${tag}`,
     {
       headers: {
         Authorization: `${accessToken}`,
