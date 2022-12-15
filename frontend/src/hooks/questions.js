@@ -3,19 +3,19 @@ import axios from "axios";
 
 const fetchQuestions = (order) => {
   return axios.get(
-    `https://tessverso.io:9080/answer/api/v1/question/page?order=${order}`
+    `http://tessverso.io:9080/answer/api/v1/question/page?order=${order}`
   );
 };
 
 const fetchSingleQuestion = (id) => {
   return axios.get(
-    `https://tessverso.io:9080/answer/api/v1/question/info?id=${id}`
+    `http://tessverso.io:9080/answer/api/v1/question/info?id=${id}`
   );
 };
 
 const addQuestion = (data) => {
   const { accessToken, body } = data;
-  return axios.post(`https://tessverso.io:9080/answer/api/v1/question`, body, {
+  return axios.post(`http://tessverso.io:9080/answer/api/v1/question`, body, {
     headers: {
       Authorization: accessToken,
     },
@@ -23,7 +23,7 @@ const addQuestion = (data) => {
 };
 
 const deleteQuestion = ({ accessToken, id }) => {
-  return axios.delete(`https://tessverso.io:9080/answer/api/v1/question`, {
+  return axios.delete(`http://tessverso.io:9080/answer/api/v1/question`, {
     headers: {
       Authorization: accessToken,
     },

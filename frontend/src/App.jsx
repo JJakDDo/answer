@@ -8,6 +8,7 @@ import QuestionDetails from "./page/QuestionDetails";
 import Ask from "./page/Ask";
 import Login from "./page/Login";
 import SignUp from "./page/SignUp";
+import Profile from "./page/Settings/Profile";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,10 @@ function App() {
           <Route path="/questions/ask" element={<Ask />} />
           <Route path="/users/login" element={<Login />} />
           <Route path="/users/register" element={<SignUp />} />
+          <Route path="/users/settings/profile" element={<Profile />} />
+          <Route path="/users/settings/notify" element={<SignUp />} />
+          <Route path="/users/settings/account" element={<SignUp />} />
+          <Route path="/users/settings/interface" element={<SignUp />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
