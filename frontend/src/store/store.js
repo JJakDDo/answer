@@ -6,8 +6,10 @@ const useStore = create(
     (set) => ({
       accessToken: "",
       username: "",
+      avatar: "",
       setAccessToken: (token) => set(() => ({ accessToken: token })),
       setUsername: (name) => set(() => ({ username: name })),
+      setAvatar: (url) => set(() => ({ avatar: url })),
     }),
     {
       name: "answers",

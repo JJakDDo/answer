@@ -11,9 +11,11 @@ export default function Login() {
   const navigate = useNavigate();
   const setAccessToken = useStore((state) => state.setAccessToken);
   const setUsername = useStore((state) => state.setUsername);
+  const setAvatar = useStore((state) => state.setAvatar);
   const onSuccess = (response) => {
     setAccessToken(response.data.data.access_token);
     setUsername(response.data.data.username);
+    setAvatar(response.data.data.avatar);
     navigate("/");
   };
   const { mutate: login } = useLogin(onSuccess);

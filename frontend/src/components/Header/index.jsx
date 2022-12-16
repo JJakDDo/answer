@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
+import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
@@ -15,6 +16,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
+import Popover from "@mui/material/Popover";
 import SearchIcon from "@mui/icons-material/Search";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -68,6 +70,22 @@ export default function Header(props) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const accessToken = useStore((state) => state.accessToken);
   const setAccessToken = useStore((state) => state.setAccessToken);
+  const avatar = useStore((state) => state.avatar);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+
+  const goToProfile = () => {
+    navigate("/users/settings/profile");
+  };
 
   const onLogout = async () => {
     await axios.get(`http://tessverso.io:9080/answer/api/v1/user/logout`, {
@@ -94,9 +112,34 @@ export default function Header(props) {
         Add Question
       </Button>
     </Link>,
-    <Button key="logout" sx={{ color: "#fff" }} onClick={onLogout}>
-      Log out
-    </Button>,
+    <React.Fragment key="avatar">
+      <Avatar alt="avatar" src={avatar} onClick={handleClick} sx={{ ml: 2 }} />
+      <Popover
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        <Box
+          sx={{
+            margin: 1,
+            display: "flex",
+            flexDirection: "column",
+            width: "100px",
+          }}
+        >
+          <Button onClick={goToProfile}>Profile</Button>
+          <Button onClick={onLogout}>Log out</Button>
+        </Box>
+      </Popover>
+    </React.Fragment>,
   ];
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
