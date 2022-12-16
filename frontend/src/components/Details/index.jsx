@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Parser from "html-react-parser";
+import { useQuery, useQueryClient } from "react-query";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -43,11 +44,12 @@ import DialogTitle from "@mui/material/DialogTitle";
 export default function Details() {
   // const { data: questions } = useGetQuestions();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { id } = useParams();
   const accessToken = useStore((state) => state.accessToken);
   const username = useStore((state) => state.username);
   const [question, setQuestion] = useState(null);
-  const { data: questionResponse } = useGetSingleQuestion(id);
+  const { data: questionResponse, refetch } = useGetSingleQuestion(id);
   const [showEditor, setShowEditor] = useState(false);
   const answerRef = useRef(null);
   const [open, setOpen] = useState(false);
@@ -68,8 +70,9 @@ export default function Details() {
   const handleDelete = (id) => {
     deleteQuestion({ accessToken, id });
   };
-  const onAddAnswerSuccess = (data) => {
-    navigate(`/questions/${data.data.data.question.id}`);
+  const onAddAnswerSuccess = () => {
+    refetch();
+    navigate(`/questions/${id}`);
   };
   const { mutate: addAnswer } = useAddAnswer(onAddAnswerSuccess);
 
@@ -201,6 +204,10 @@ export default function Details() {
                   <DialogContent>
                     <DialogContentText id="alert-dialog-description">
                       Are you sure you wish to delete?
+                      {/* We do not recommend <strong>deleting questions with answers</strong>{" "}
+            because doing so deprives future readers of this knowledge. Repeated
+            deletion of answered questions can result in your account being
+            blocked from asking. Are you sure you wish to delete? */}
                     </DialogContentText>
                   </DialogContent>
                   <DialogActions>
@@ -251,7 +258,12 @@ export default function Details() {
           mb: 2,
         }}
       >
-        <Answers id={id} />
+        <Answers
+          id={id}
+          isWriter={username === question.user_info.username}
+          accepted_answer_id={question.accepted_answer_id}
+          refetch={refetch}
+        />
       </Box>
 
       <Box

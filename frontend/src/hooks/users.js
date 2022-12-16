@@ -15,7 +15,7 @@ import axios from "axios";
 // );
 const login = ({ e_mail, pass }) => {
   return axios.post(
-    `http://tessverso.io:9080/answer/api/v1/user/login/email`,
+    `https://tessverso.io/answer/answer/api/v1/user/login/email`,
     {
       e_mail,
       pass,
@@ -29,7 +29,7 @@ const login = ({ e_mail, pass }) => {
 };
 
 const getInfo = (accessToken) => {
-  return axios.get(`http://tessverso.io:9080/answer/api/v1/user/info`, {
+  return axios.get(`https://tessverso.io/answer/answer/api/v1/user/info`, {
     headers: {
       Authorization: accessToken,
     },
@@ -37,11 +37,15 @@ const getInfo = (accessToken) => {
 };
 
 const updateUserInfo = ({ accessToken, body }) => {
-  return axios.put(`http://tessverso.io:9080/answer/api/v1/user/info`, body, {
-    headers: {
-      Authorization: accessToken,
-    },
-  });
+  return axios.put(
+    `https://tessverso.io/answer/answer/api/v1/user/info`,
+    body,
+    {
+      headers: {
+        Authorization: accessToken,
+      },
+    }
+  );
 };
 
 export const useUserInfo = (accessToken) => {

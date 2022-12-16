@@ -50,6 +50,7 @@ export default function QuestionList() {
 
   useEffect(() => {
     if (questions) {
+      console.log(questions.data.data);
       setList(questions.data.data.list);
     }
   }, [questions]);

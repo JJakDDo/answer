@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Parser from "html-react-parser";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -16,20 +16,62 @@ import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import CommentIcon from "@mui/icons-material/Comment";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
-import { useGetQuestions } from "../../hooks/questions";
+import { useDeleteQuestion, useGetQuestions } from "../../hooks/questions";
 import { convertDateToText } from "../../utils/convertDateToText";
 
 import answers from "./mockData.json";
 import Comments from "../Comments";
-import { useGetAnswers } from "../../hooks/answers";
+import {
+  useAcceptAnswer,
+  useDeleteAnswer,
+  useGetAnswers,
+} from "../../hooks/answers";
 import useStore from "../../store/store";
 
-export default function Answers({ id }) {
+export default function Answers({ id, isWriter, accepted_answer_id, refetch }) {
   // const { data: questions } = useGetQuestions();
+  const navigate = useNavigate();
   const [answers, setAnswers] = useState(null);
   const username = useStore((state) => state.username);
+  const [open, setOpen] = useState(false);
+  const accessToken = useStore((state) => state.accessToken);
+  const [deleteId, setDeleteId] = useState("");
   const { data: answerResponse } = useGetAnswers("default", id);
+
+  const onDeleteSuccess = () => {
+    // navigate(`/questions/${id}`);
+    refetch();
+    handleClose();
+  };
+  const onAcceptSuccess = () => {
+    // navigate(`/questions/${id}`);
+    refetch();
+  };
+
+  const { mutate: deleteAnswer } = useDeleteAnswer(onDeleteSuccess);
+  const { mutate: acceptAnswer } = useAcceptAnswer(onAcceptSuccess);
+
+  const handleClickOpen = (answer_id) => {
+    setOpen(true);
+    setDeleteId(answer_id);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleDelete = () => {
+    deleteAnswer({ accessToken, id: deleteId });
+  };
+
+  const handleAccept = (answer_id) => {
+    acceptAnswer({ accessToken, question_id: id, answer_id });
+  };
 
   useEffect(() => {
     if (answerResponse) {
@@ -86,9 +128,25 @@ export default function Answers({ id }) {
                         answered {convertDateToText(answer.create_time)}
                       </Typography>
                     </Box>
-                    <Button variant="outlined" size="small">
-                      Accept
-                    </Button>
+                    {isWriter && (
+                      <Button
+                        variant={
+                          accepted_answer_id === answer.id
+                            ? "contained"
+                            : "outlined"
+                        }
+                        size="small"
+                        onClick={() =>
+                          handleAccept(
+                            accepted_answer_id === answer.id ? "0" : answer.id
+                          )
+                        }
+                      >
+                        {accepted_answer_id === answer.id
+                          ? `Accepted`
+                          : `Accept`}
+                      </Button>
+                    )}
                   </Box>
                   <p style={{ textAlign: "left" }}>{Parser(answer.html)}</p>
                   <Comments />
@@ -106,7 +164,9 @@ export default function Answers({ id }) {
                         <Button sx={{ borderRight: "none !important" }}>
                           Edit
                         </Button>
-                        <Button>Delete</Button>
+                        <Button onClick={() => handleClickOpen(answer.id)}>
+                          Delete
+                        </Button>
                       </>
                     )}
                   </ButtonGroup>
@@ -116,6 +176,25 @@ export default function Answers({ id }) {
           ))}
         </List>
       </Paper>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Delete this post"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you wish to delete?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleDelete} autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

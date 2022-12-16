@@ -88,7 +88,7 @@ export default function Header(props) {
   };
 
   const onLogout = async () => {
-    await axios.get(`http://tessverso.io:9080/answer/api/v1/user/logout`, {
+    await axios.get(`https://tessverso.io/answer/answer/api/v1/user/logout`, {
       headers: {
         Authorization: accessToken,
       },
