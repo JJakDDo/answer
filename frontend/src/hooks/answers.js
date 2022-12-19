@@ -44,9 +44,10 @@ export const useGetAnswers = (order, id) => {
   return useQuery(["answers", id], () => fetchAnswers(order, id));
 };
 
-export const useAddAnswer = (onSuccess) => {
+export const useAddAnswer = (onSuccess, onError) => {
   return useMutation(addAnswer, {
     onSuccess,
+    onError,
   });
 };
 

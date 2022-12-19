@@ -39,6 +39,9 @@ export default function AskQuestion() {
   const accessToken = useStore((state) => state.accessToken);
   const [showAnswer, setShowAnswer] = useState(false);
   const [selectedTag, setSelectedTag] = useState([]);
+  const [titleError, setTitleError] = useState(false);
+  const [titleErrorMessage, setTitleErrorMessage] = useState("");
+  const [bodyError, setBodyError] = useState(false);
   const titleRef = useRef(null);
   const questionRef = useRef(null);
   const answerRef = useRef(null);
@@ -46,7 +49,13 @@ export default function AskQuestion() {
   const onAddAnswerSuccess = (data) => {
     navigate(`/questions/${data.data.data.question.id}`);
   };
-  const { mutate: addAnswer } = useAddAnswer(onAddAnswerSuccess);
+  const onAddAnswerError = (data) => {
+    console.log(error);
+  };
+  const { mutate: addAnswer } = useAddAnswer(
+    onAddAnswerSuccess,
+    onAddAnswerError
+  );
   const onSuccess = (data) => {
     addQuestion({
       accessToken,
@@ -76,6 +85,24 @@ export default function AskQuestion() {
   const { mutate: addQuestion } = useAddQuestion(onSuccess);
 
   const onPostQuestion = () => {
+    if (!titleRef.current.value) {
+      setTitleError(true);
+      setTitleErrorMessage("Title is required!");
+      return;
+    } else if (titleRef.current.value.length < 6) {
+      setTitleError(true);
+      setTitleErrorMessage("Title must be at least 6 characters in length");
+      return;
+    } else {
+      setTitleError(false);
+    }
+
+    if (!questionRef.current.value) {
+      setBodyError(true);
+      return;
+    } else {
+      setBodyError(false);
+    }
     addQuestion({
       accessToken,
       body: {
@@ -109,9 +136,27 @@ export default function AskQuestion() {
           size="small"
           inputRef={titleRef}
         />
+        {titleError && (
+          <Typography
+            component="span"
+            variant="subtitle2"
+            color="text.secondary"
+          >
+            {titleErrorMessage}
+          </Typography>
+        )}
         <Typography component="span" variant="h6" color="text.primary">
           Body
         </Typography>
+        {bodyError && (
+          <Typography
+            component="span"
+            variant="subtitle2"
+            color="text.secondary"
+          >
+            Body is required!
+          </Typography>
+        )}
         <ReactQuill
           style={{ marginTop: "10px", marginBottom: "10px" }}
           ref={(element) => {
