@@ -55,8 +55,26 @@ const signUp = (data) => {
   );
 };
 
+const uploadAvatar = ({ accessToken, form }) => {
+  return axios.post(
+    "https://tessverso.io/answer/answer/api/v1/user/avatar/upload",
+    form,
+    {
+      headers: {
+        Authorization: accessToken,
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+};
+
 export const useUserInfo = (accessToken) => {
-  return useQuery(["info"], () => getInfo(accessToken));
+  return useQuery(["info"], () => getInfo(accessToken), {
+    refetchOnWindowFocus: false,
+    refetchOnmount: false,
+    refetchOnReconnect: false,
+    retry: false,
+  });
 };
 
 export const useLogin = (onSuccess) => {
@@ -76,5 +94,11 @@ export const useSignUp = (onSuccess, onError) => {
   return useMutation(signUp, {
     onSuccess,
     onError,
+  });
+};
+
+export const useUploadAvatar = (onSuccess) => {
+  return useMutation(uploadAvatar, {
+    onSuccess,
   });
 };

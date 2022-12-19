@@ -21,7 +21,11 @@ import Typography from "@mui/material/Typography";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import useStore from "../../../store/store";
-import { useUpdateUserInfo, useUserInfo } from "../../../hooks/users";
+import {
+  useUpdateUserInfo,
+  useUploadAvatar,
+  useUserInfo,
+} from "../../../hooks/users";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -32,12 +36,17 @@ export default function Profile() {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [profileType, setProfileType] = useState("default");
+  const [customAvatar, setCustomAvatar] = useState("");
+  const [error, setError] = useState(false);
   const bioRef = useRef(null);
   const displayNameRef = useRef(null);
   const locationRef = useRef(null);
   const usernameRef = useRef(null);
   const websiteRef = useRef(null);
+  const customAvatarRef = useRef(null);
   const accessToken = useStore((state) => state.accessToken);
+  const setUsername = useStore((state) => state.setUsername);
+  const setAvatar = useStore((state) => state.setAvatar);
 
   const onProfileTypeChange = (e) => {
     setProfileType(e.target.value);
@@ -45,13 +54,13 @@ export default function Profile() {
 
   const { data: userInfoResponse, refetch } = useUserInfo(accessToken);
 
-  const onUpdateSuccess = () => {
+  const onUpdateSuccess = (response) => {
     setOpen(true);
     refetch();
   };
   const { mutate: updateProfile } = useUpdateUserInfo(onUpdateSuccess);
 
-  const onUpdateProfile = () => {
+  const onUploadAvatarSuccess = (response) => {
     updateProfile({
       accessToken,
       body: {
@@ -63,10 +72,52 @@ export default function Profile() {
         website: websiteRef.current.value,
         avatar: {
           type: profileType,
-          gravatar: `https://www.gravatar.com/avatar/64e1b8d34f425d19e1ee2ea7236d3028?s=256&d=identicon&t=1671091423386&d=identicon`,
+          gravatar: "",
+          custom: response.data.data,
         },
       },
     });
+  };
+
+  const { mutate: uploadAvatar } = useUploadAvatar(onUploadAvatarSuccess);
+
+  const onAvatarChange = () => {
+    setCustomAvatar(URL.createObjectURL(customAvatarRef.current.files[0]));
+  };
+
+  const onUpdateProfile = () => {
+    if (profileType === "custom") {
+      if (customAvatarRef.current.files.length <= 0) {
+        setError(true);
+        return;
+      }
+
+      setError(false);
+
+      const frm = new FormData();
+      frm.append("file", customAvatarRef.current.files[0]);
+
+      uploadAvatar({ accessToken, form: frm });
+    } else {
+      updateProfile({
+        accessToken,
+        body: {
+          bio: bioRef.current.value,
+          bio_html: bioRef.current.value,
+          display_name: displayNameRef.current.value,
+          location: locationRef.current.value,
+          username: usernameRef.current.value,
+          website: websiteRef.current.value,
+          avatar: {
+            type: profileType,
+            gravatar:
+              profileType === "gravatar"
+                ? `https://www.gravatar.com/avatar/64e1b8d34f425d19e1ee2ea7236d3028?s=256&d=identicon&t=1671091423386&d=identicon`
+                : "",
+          },
+        },
+      });
+    }
   };
 
   const handleClose = (event, reason) => {
@@ -80,8 +131,17 @@ export default function Profile() {
     if (userInfoResponse) {
       setUser(userInfoResponse.data.data);
       setProfileType(userInfoResponse.data.data.avatar.type);
+      setAvatar(
+        userInfoResponse.data.data.avatar.custom ||
+          userInfoResponse.data.data.avatar.gravatar
+      );
+      setUsername(userInfoResponse.data.data.username);
     }
   }, [userInfoResponse]);
+
+  useEffect(() => {
+    console.log(profileType);
+  }, [profileType]);
 
   if (!user) return null;
 
@@ -160,7 +220,7 @@ export default function Profile() {
                   row
                   aria-labelledby="demo-row-radio-buttons-group-label"
                   name="row-radio-buttons-group"
-                  defaultValue={user.avatar.type}
+                  value={profileType}
                   onChange={onProfileTypeChange}
                 >
                   <FormControlLabel
@@ -180,16 +240,44 @@ export default function Profile() {
                   />
                 </RadioGroup>
               </FormControl>
-              <Box>
-                <img
-                  src={
-                    profileType === "gravatar"
-                      ? `https://www.gravatar.com/avatar/64e1b8d34f425d19e1ee2ea7236d3028?s=256&d=identicon&t=1671091423386&d=identicon`
-                      : `http://tessverso.io:9080/static/media/default-avatar.ac1be9284e893e315871fa5e571cabaf.svg`
-                  }
-                  loading="lazy"
-                  width={150}
-                />
+              <Box sx={{ display: "flex", alignItems: "center", gap: 5 }}>
+                {error && (
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Please choose avatar image
+                  </Typography>
+                )}
+                {profileType === "custom" ? (
+                  <>
+                    <img
+                      src={
+                        customAvatar ||
+                        `http://tessverso.io:9080/static/media/default-avatar.ac1be9284e893e315871fa5e571cabaf.svg`
+                      }
+                      loading="lazy"
+                      width={150}
+                    />
+                    <Button variant="contained" component="label">
+                      Upload File
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={onAvatarChange}
+                        ref={customAvatarRef}
+                        hidden
+                      />
+                    </Button>
+                  </>
+                ) : (
+                  <img
+                    src={
+                      profileType === "gravatar"
+                        ? `https://www.gravatar.com/avatar/64e1b8d34f425d19e1ee2ea7236d3028?s=256&d=identicon&t=1671091423386&d=identicon`
+                        : `http://tessverso.io:9080/static/media/default-avatar.ac1be9284e893e315871fa5e571cabaf.svg`
+                    }
+                    loading="lazy"
+                    width={150}
+                  />
+                )}
               </Box>
             </Box>
             <Box>
