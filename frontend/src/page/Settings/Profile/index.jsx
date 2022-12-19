@@ -135,13 +135,10 @@ export default function Profile() {
         userInfoResponse.data.data.avatar.custom ||
           userInfoResponse.data.data.avatar.gravatar
       );
+      setCustomAvatar(userInfoResponse.data.data.avatar.custom || "");
       setUsername(userInfoResponse.data.data.username);
     }
   }, [userInfoResponse]);
-
-  useEffect(() => {
-    console.log(profileType);
-  }, [profileType]);
 
   if (!user) return null;
 
