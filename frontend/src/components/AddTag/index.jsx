@@ -70,12 +70,12 @@ export default function AddTag({ selectedTag, setSelectedTag }) {
             {selectedTag.map((tag, index) => (
               <Button key={index} size="small" variant="outlined">
                 {tag.slug_name}
-                <CloseIcon fontSize="small" />
+                {/* <CloseIcon fontSize="small" /> */}
               </Button>
             ))}
           </>
         )}
-        <div>
+        {/* <div>
           <Button
             variant="outlined"
             size="small"
@@ -121,7 +121,7 @@ export default function AddTag({ selectedTag, setSelectedTag }) {
               )}
             </Box>
           </Popper>
-        </div>
+        </div> */}
       </Box>
       <NewTag
         open={openModal}

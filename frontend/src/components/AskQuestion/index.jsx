@@ -1,4 +1,5 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import axios from "axios";
 import ReactQuill from "react-quill";
 import { useNavigate } from "react-router-dom";
 import { styled } from "@mui/material/styles";
@@ -57,18 +58,6 @@ export default function AskQuestion() {
     onAddAnswerError
   );
   const onSuccess = (data) => {
-    addQuestion({
-      accessToken,
-      body: {
-        content: questionRef.current.value,
-        html: questionRef.current.value,
-        // tags: selectedTag.map((tag) => ({
-        //   slug_name: tag,
-        // })),
-        tags: selectedTag,
-        title: titleRef.current.value,
-      },
-    });
     if (answerRef.current) {
       addAnswer({
         accessToken,
@@ -113,6 +102,15 @@ export default function AskQuestion() {
       },
     });
   };
+
+  useEffect(() => {
+    const getTag = async () => {
+      const response = await axios.get(`https://tessverso.io/node/api/v1/tag`);
+      setSelectedTag([response.data.data]);
+    };
+
+    getTag();
+  }, []);
   return (
     <Box sx={{ width: "90%", maxWidth: "1100px", minWidth: "450px" }}>
       <Typography component="span" variant="h4" color="text.primary">
